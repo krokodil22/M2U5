@@ -42,10 +42,6 @@ let animationId = 0;
 
 bestScoreEl.textContent = bestScore;
 
-document.addEventListener('contextmenu', (event) => {
-  if (running) event.preventDefault();
-});
-
 startButton.addEventListener('click', startGame);
 window.addEventListener('keydown', (event) => {
   if (!running) return;
@@ -57,10 +53,11 @@ window.addEventListener('mousedown', (event) => {
   if (event.button === 0) {
     handlePrompt('mouse-left');
   }
-  if (event.button === 2) {
-    event.preventDefault();
-    handlePrompt('mouse-right');
-  }
+});
+window.addEventListener('contextmenu', (event) => {
+  if (!running) return;
+  event.preventDefault();
+  handlePrompt('mouse-right');
 });
 window.addEventListener(
   'wheel',
