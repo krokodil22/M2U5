@@ -61,11 +61,12 @@ window.addEventListener('contextmenu', (event) => {
 });
 window.addEventListener(
   'wheel',
-  () => {
+  (event) => {
     if (!running) return;
+    event.preventDefault();
     handlePrompt('wheel');
   },
-  { passive: true },
+  { passive: false },
 );
 
 function startGame() {
