@@ -1,0 +1,278 @@
+:root {
+  --panel-bg: rgba(8, 14, 37, 0.84);
+  --text: #f4f7ff;
+  --accent: #ffd166;
+  --accent-2: #7ae7ff;
+  --danger: #ff6b6b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Trebuchet MS", "Arial", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top, #223a7a 0%, #101a3a 35%, #060814 100%);
+  overflow: hidden;
+}
+
+.game-shell {
+  width: min(1100px, 100vw);
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.hud,
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.hud > div,
+.legend {
+  background: var(--panel-bg);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.hud > div {
+  flex: 1;
+  padding: 12px 18px;
+  text-align: center;
+}
+
+.label {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #b9c3ff;
+}
+
+.hud p:last-child {
+  margin: 6px 0 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.game-panel {
+  position: relative;
+  height: 68vh;
+  min-height: 560px;
+  overflow: hidden;
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(46, 64, 123, 0.55), rgba(5, 8, 17, 0.9));
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+}
+
+.game-area {
+  position: absolute;
+  inset: 0;
+}
+
+.stars,
+.planet {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stars-back {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.6) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(122, 231, 255, 0.75) 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(255, 209, 102, 0.7) 0 1px, transparent 2px);
+  background-size: 180px 180px, 230px 230px, 280px 280px;
+  animation: drift 26s linear infinite;
+}
+
+.stars-front {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 1.2px, transparent 2px),
+    radial-gradient(circle, rgba(255, 180, 130, 0.8) 0 1.2px, transparent 2.2px);
+  background-size: 140px 140px, 190px 190px;
+  animation: drift 16s linear infinite reverse;
+  opacity: 0.8;
+}
+
+.planet::before {
+  content: "";
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  right: -40px;
+  bottom: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #a2f4ff, #4db6d8 55%, #254779 100%);
+  box-shadow: 0 0 60px rgba(77, 182, 216, 0.35);
+}
+
+.hero {
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 190px;
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.35));
+  animation: hover 2.2s ease-in-out infinite;
+}
+
+.hero img {
+  width: 100%;
+  display: block;
+}
+
+.asteroid {
+  position: absolute;
+  width: 120px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 28% 28%, #d7b789 0 16%, #aa7b4e 17%, #7a5332 57%, #53311d 100%);
+  box-shadow: inset -12px -18px 18px rgba(43, 20, 5, 0.5), 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+.asteroid::before,
+.asteroid::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(65, 37, 18, 0.35);
+}
+
+.asteroid::before {
+  width: 24px;
+  height: 24px;
+  top: 26px;
+  left: 22px;
+}
+
+.asteroid::after {
+  width: 18px;
+  height: 18px;
+  bottom: 22px;
+  right: 24px;
+}
+
+.prompt {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  min-width: 50px;
+  min-height: 50px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: rgba(255, 247, 230, 0.95);
+  color: #33220b;
+  font-size: 1.6rem;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.prompt img {
+  display: block;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.message {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(540px, calc(100% - 32px));
+  padding: 28px;
+  border-radius: 28px;
+  background: rgba(8, 16, 41, 0.88);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  text-align: center;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.4);
+}
+
+.message.hidden {
+  display: none;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #2b1b00;
+  background: linear-gradient(180deg, #ffe38a, #ffbd4a);
+  cursor: pointer;
+}
+
+.legend {
+  padding: 10px 22px;
+  display: block;
+}
+
+.legend h2 {
+  margin: 8px 0 6px;
+}
+
+.legend ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #d7ddff;
+}
+
+.floating-text {
+  position: absolute;
+  font-weight: 900;
+  color: #fff3b0;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  animation: pop 0.7s ease-out forwards;
+  pointer-events: none;
+}
+
+.hit {
+  animation: explode 0.28s ease-out forwards;
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+@keyframes drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-120px); }
+}
+
+@keyframes hover {
+  0%, 100% { transform: translateY(-50%) translateX(0); }
+  50% { transform: translateY(calc(-50% - 10px)) translateX(6px); }
+}
+
+@keyframes explode {
+  to { transform: scale(1.35); opacity: 0; }
+}
+
+@keyframes pop {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-34px) scale(1.3); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateY(-50%); }
+  30% { transform: translate(-8px, -50%); }
+  70% { transform: translate(8px, -50%); }
+}
+
+@media (max-width: 760px) {
+  body { overflow: auto; }
+  .game-shell { padding: 10px; }
+  .hud { flex-direction: column; }
+  .game-panel { min-height: 500px; height: 62vh; }
+  .hero { width: 150px; left: 22px; }
+  .asteroid { width: 94px; }
+  .prompt { min-width: 42px; min-height: 42px; font-size: 1.1rem; }
+}
