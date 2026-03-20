@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Гриша и метеориты</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="hud">
+        <div>
+          <p class="label">Очки</p>
+          <p id="score">0</p>
+        </div>
+        <div>
+          <p class="label">Жизни</p>
+          <p id="lives">3</p>
+        </div>
+        <div>
+          <p class="label">Лучший счёт</p>
+          <p id="best-score">0</p>
+        </div>
+      </section>
+
+      <section class="game-panel">
+        <div class="stars stars-back"></div>
+        <div class="stars stars-front"></div>
+        <div class="planet"></div>
+        <div id="game-area" class="game-area">
+          <div id="hero" class="hero">
+            <img src="grisha-rocket.png" alt="Гриша на ракете" />
+          </div>
+        </div>
+        <div id="message" class="message">
+          <h1>Гриша летит сквозь астероиды!</h1>
+          <p>
+            Нажимай кнопку, которая показана на метеорите: клавиши клавиатуры,
+            ЛКМ, ПКМ или колесико мыши.
+          </p>
+          <button id="start-button">Старт</button>
+        </div>
+      </section>
+
+      <section class="legend">
+        <h2>Как играть</h2>
+        <ul>
+          <li>Разбивай астероиды правильной кнопкой.</li>
+          <li>Клавиши показываются прямо на метеорите.</li>
+          <li>ЛКМ — левая кнопка мыши, ПКМ — правая, колесико — прокрутка.</li>
+        </ul>
+      </section>
+    </main>
+
+    <script src="game.js"></script>
+  </body>
+</html>
