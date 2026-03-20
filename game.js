@@ -6,7 +6,24 @@ const messageEl = document.getElementById('message');
 const startButton = document.getElementById('start-button');
 const heroEl = document.getElementById('hero');
 
-const keyboardPrompts = ['A', 'S', 'D', 'F', 'J', 'K', 'L', 'Q', 'W', 'E'];
+const keyboardPrompts = [
+  { type: 'Ф', label: 'Ф', aliases: ['Ф', 'A'] },
+  { type: 'Ы', label: 'Ы', aliases: ['Ы', 'S'] },
+  { type: 'В', label: 'В', aliases: ['В', 'D'] },
+  { type: 'А', label: 'А', aliases: ['А', 'F'] },
+  { type: 'О', label: 'О', aliases: ['О', 'J'] },
+  { type: 'Л', label: 'Л', aliases: ['Л', 'K'] },
+  { type: 'Д', label: 'Д', aliases: ['Д', 'L'] },
+  { type: 'Й', label: 'Й', aliases: ['Й', 'Q'] },
+  { type: 'Ц', label: 'Ц', aliases: ['Ц', 'W'] },
+  { type: 'У', label: 'У', aliases: ['У', 'E'] },
+];
+const keyAliases = keyboardPrompts.reduce((map, prompt) => {
+  prompt.aliases.forEach((alias) => {
+    map[alias] = prompt.type;
+  });
+  return map;
+}, {});
 const specialPrompts = [
   { type: 'mouse-left', image: 'mouse1.png', label: 'ЛКМ' },
   { type: 'mouse-right', image: 'mouse2.png', label: 'ПКМ' },
@@ -20,8 +37,9 @@ let bestScore = Number(localStorage.getItem('grisha-best-score') || 0);
 let running = false;
 let lastTime = 0;
 let spawnTimer = 0;
-let spawnInterval = 1200;
+let spawnInterval = 0;
 let animationId = 0;
+let elapsedTime = 0;
 
 bestScoreEl.textContent = bestScore;
 
@@ -33,7 +51,7 @@ startButton.addEventListener('click', startGame);
 window.addEventListener('keydown', (event) => {
   if (!running) return;
   const key = event.key.toUpperCase();
-  handlePrompt(key);
+  handlePrompt(keyAliases[key] || key);
 });
 window.addEventListener('mousedown', (event) => {
   if (!running) return;
@@ -45,17 +63,22 @@ window.addEventListener('mousedown', (event) => {
     handlePrompt('mouse-right');
   }
 });
-window.addEventListener('wheel', () => {
-  if (!running) return;
-  handlePrompt('wheel');
-}, { passive: true });
+window.addEventListener(
+  'wheel',
+  () => {
+    if (!running) return;
+    handlePrompt('wheel');
+  },
+  { passive: true },
+);
 
 function startGame() {
   clearAsteroids();
   score = 0;
   lives = 3;
   spawnTimer = 0;
-  spawnInterval = 1250;
+  spawnInterval = 1450;
+  elapsedTime = 0;
   asteroids = [];
   lastTime = 0;
   running = true;
@@ -69,16 +92,21 @@ function loop(timestamp) {
   if (!lastTime) lastTime = timestamp;
   const delta = timestamp - lastTime;
   lastTime = timestamp;
+  elapsedTime += delta;
 
   spawnTimer += delta;
   if (spawnTimer >= spawnInterval) {
     spawnTimer = 0;
     spawnAsteroid();
-    spawnInterval = Math.max(580, spawnInterval - 18);
+    spawnInterval = Math.max(760, spawnInterval - 10);
   }
 
   updateAsteroids(delta);
   animationId = requestAnimationFrame(loop);
+}
+
+function getSpeedMultiplier() {
+  return 1 + Math.min(0.35, elapsedTime / 1000 * 0.01);
 }
 
 function spawnAsteroid() {
@@ -97,9 +125,8 @@ function spawnAsteroid() {
     image.alt = prompt.label;
     promptEl.appendChild(image);
   } else {
-    const value = keyboardPrompts[Math.floor(Math.random() * keyboardPrompts.length)];
-    prompt = { type: value, label: value };
-    promptEl.textContent = value;
+    prompt = { ...keyboardPrompts[Math.floor(Math.random() * keyboardPrompts.length)] };
+    promptEl.textContent = prompt.label;
   }
 
   asteroid.appendChild(promptEl);
@@ -110,7 +137,6 @@ function spawnAsteroid() {
   asteroid.style.top = `${top}px`;
   asteroid.style.left = `${gameArea.clientWidth + size}px`;
   asteroid.style.width = `${size}px`;
-  asteroid.style.transform = `rotate(${Math.random() * 360}deg)`;
 
   asteroids.push({
     element: asteroid,
@@ -118,9 +144,7 @@ function spawnAsteroid() {
     x: gameArea.clientWidth + size,
     y: top,
     size,
-    speed: 220 + Math.random() * 130 + score * 2.8,
-    rotation: Math.random() * 360,
-    rotationSpeed: -100 + Math.random() * 200,
+    baseSpeed: 180 + Math.random() * 70,
   });
 }
 
@@ -128,12 +152,11 @@ function updateAsteroids(delta) {
   const heroBox = heroEl.getBoundingClientRect();
   const gameBox = gameArea.getBoundingClientRect();
   const heroFront = heroBox.right - gameBox.left - 12;
+  const speedMultiplier = getSpeedMultiplier();
 
   asteroids = asteroids.filter((asteroid) => {
-    asteroid.x -= asteroid.speed * delta / 1000;
-    asteroid.rotation += asteroid.rotationSpeed * delta / 1000;
+    asteroid.x -= asteroid.baseSpeed * speedMultiplier * delta / 1000;
     asteroid.element.style.left = `${asteroid.x}px`;
-    asteroid.element.style.transform = `rotate(${asteroid.rotation}deg)`;
 
     if (asteroid.x < heroFront && asteroid.x + asteroid.size > 48) {
       asteroid.element.remove();
