@@ -39,7 +39,6 @@ let lastTime = 0;
 let spawnTimer = 0;
 let spawnInterval = 0;
 let animationId = 0;
-let elapsedTime = 0;
 
 bestScoreEl.textContent = bestScore;
 
@@ -77,8 +76,7 @@ function startGame() {
   score = 0;
   lives = 3;
   spawnTimer = 0;
-  spawnInterval = 1450;
-  elapsedTime = 0;
+  spawnInterval = getSpawnInterval();
   asteroids = [];
   lastTime = 0;
   running = true;
@@ -92,21 +90,32 @@ function loop(timestamp) {
   if (!lastTime) lastTime = timestamp;
   const delta = timestamp - lastTime;
   lastTime = timestamp;
-  elapsedTime += delta;
-
   spawnTimer += delta;
-  if (spawnTimer >= spawnInterval) {
-    spawnTimer = 0;
+  spawnInterval = getSpawnInterval();
+  while (spawnTimer >= spawnInterval) {
+    spawnTimer -= spawnInterval;
     spawnAsteroid();
-    spawnInterval = Math.max(760, spawnInterval - 10);
+    spawnInterval = getSpawnInterval();
   }
 
   updateAsteroids(delta);
   animationId = requestAnimationFrame(loop);
 }
 
+function getSpawnInterval() {
+  if (score <= 100) {
+    return 1850 - (score / 100) * 400;
+  }
+
+  return Math.max(760, 1450 - (score - 100) * 4);
+}
+
 function getSpeedMultiplier() {
-  return 1 + Math.min(0.35, elapsedTime / 1000 * 0.01);
+  if (score <= 100) {
+    return 0.72 + (score / 100) * 0.28;
+  }
+
+  return 1 + Math.min(0.35, ((score - 100) / 300) * 0.35);
 }
 
 function spawnAsteroid() {
